@@ -1,6 +1,9 @@
 # solarmon
-Read RS485 metrics out of Growatt inverters and store it to Prometheus/InfluxDB do view them in Grafana. You can pust to Prometheus, InfluxDB or both.
+Read RS485 metrics out of Growatt inverters and store it to Prometheus/InfluxDB do view it in Grafana.   
+You can post to Prometheus, InfluxDB or both.  
 Tested on  Growat SPH 10000 TL3 BH UP inverter.
+
+This project is based on https://github.com/ZeroErrors/solarmon
 
 ## How to set up all the things to work:
 
@@ -12,12 +15,12 @@ Tested on  Growat SPH 10000 TL3 BH UP inverter.
 
 ### Wiring to Growat SPH inverter
 
-Growat user man: https://growatt.pl/wp-content/uploads/2021/03/SPH-4-10KTL3-BH-UP-User-Manual.pdf  
-Growat RS485 port: Growatt PV Inverter Modbus RS485 RTU Protocol v120.pdf  
-(both documets are attached)  
+Growat user man:  SPH-4-10KTL3-BH-UP-User-Manual.pdf  
+Growat RS485 port:  Growatt PV Inverter Modbus RS485 RTU Protocol v120.pdf  
+(documets are attached)  
 
-Use some USB/RS485 dongle to connect Raspberry Pi do Growatt inverter.  
-Wire the RJ45 connector according to this dokumentation https://solar-assistant.io/help/growatt/configuration  chapter Growatt SPH range, Option 3.  
+Use some USB/RS485 dongle to connect Raspberry Pi to Growatt inverter.  
+Wire the RJ45 connector according to this documentation https://solar-assistant.io/help/growatt/configuration  chapter Growatt SPH range, Option 3.  
 Simply: use two-wire cable and use pins 5(A) and 1(B). Connect it to Inverter, socket 485-3.
 
 
@@ -89,6 +92,3 @@ Generate token with role for writing metrics to your Prometheus DB and save this
 Import Dashboard Growatt-prometheus-cloud (attached to this project).  
 
 
-Origin:  
-
-This project is based on https://github.com/ZeroErrors/solarmon, which is tuned for older Growat inverters.
