@@ -83,6 +83,7 @@ sudo systemctl start solarmon
 sudo systemctl status solarmon
 sudo systemctl enable solarmon
 ```
+or simply run it by ```python3 solarmon.py```
 
 
 ### Prometheus and Grafana as a Cloud service
