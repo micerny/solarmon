@@ -3,6 +3,9 @@ Read RS485 metrics out of Growatt inverters and store it to Prometheus/InfluxDB 
 You can post to Prometheus, InfluxDB or both.  
 Tested on  Growat SPH 10000 TL3 BH UP inverter.
 
+Additionally, you can read data from "RS485 over TCP socket" in greenbono_socket.py  
+Additionally, you can use your own logic, calculation or anything in automation.py
+
 This project is based on https://github.com/ZeroErrors/solarmon
 
 ## How to set up all the things to work:
@@ -83,6 +86,7 @@ sudo systemctl start solarmon
 sudo systemctl status solarmon
 sudo systemctl enable solarmon
 ```
+or simply run it by ```python3 solarmon.py```
 
 
 ### Prometheus and Grafana as a Cloud service
