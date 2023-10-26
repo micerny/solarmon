@@ -1,4 +1,8 @@
 import datetime
+
+import logging
+log = logging.getLogger('solarmon')
+
 from pymodbus.exceptions import ModbusIOException
 
 # Codes
@@ -40,8 +44,18 @@ DeratingMode = {
     9: '*OverBackByTime',
 }
 
+#def read_signed16(row, index, unit=10):
+#        return ((-1) * (row[index +1] -  row[index])) / unit
+
 def read_single(row, index, unit=10):
     return float(row.registers[index]) / unit
+
+def read_single_signed(row, index, unit=10):
+    value = row.registers[index]
+    if ( value < 10000 ):     # 1000A, + je nabijeni, - je vybijeni
+        return float(value) / unit
+    else:
+        return float(value - 65535) / unit
 
 def read_double(row, index, unit=10):
     return float((row.registers[index] << 16) + row.registers[index + 1]) / unit
@@ -68,10 +82,10 @@ class Growatt:
         self.modbusVersion = row.registers[0]
 
     def print_info(self):
-        print('Growatt:')
-        print('\tName: ' + str(self.name))
-        print('\tUnit: ' + str(self.unit))
-        print('\tModbus Version: ' + str(self.modbusVersion/100))
+        log.info('Growatt:')
+        log.info('Name: ' + str(self.name))
+        log.info('Unit: ' + str(self.unit))
+        log.info('Modbus Version: ' + str(self.modbusVersion/100))
 
     def read(self):
         row = self.client.read_input_registers(0, 120, unit=self.unit)
@@ -97,24 +111,24 @@ class Growatt:
                                                     # 0.1W,     PV2Watt L,          PV2 input watt (low)
             'Pac': read_double(row, 35),            # 0.1W,     Pac H,              Output power (high)
                                                     # 0.1W,     Pac L,              Output power (low)
-            'Fac': read_single(row, 37, 100),       # 0.01Hz,   Fac,                Grid frequency
-            'Vac1': read_single(row, 38),           # 0.1V,     Vac1,               Three/single phase grid voltage
-            'Iac1': read_single(row, 39),           # 0.1A,     Iac1,               Three/single phase grid output current
+            #'Fac': read_single(row, 37, 100),       # 0.01Hz,   Fac,                Grid frequency
+            #'Vac1': read_single(row, 38),           # 0.1V,     Vac1,               Three/single phase grid voltage
+            #'Iac1': read_single(row, 39),           # 0.1A,     Iac1,               Three/single phase grid output current
             'Pac1': read_double(row, 40),           # 0.1VA,    Pac1 H,             Three/single phase grid output watt (high)
                                                     # 0.1VA,    Pac1 L,             Three/single phase grid output watt (low)
-            'Vac2': read_single(row, 42),           # 0.1V,     Vac2,               Three phase grid voltage
-            'Iac2': read_single(row, 43),           # 0.1A,     Iac2,               Three phase grid output current
+            #'Vac2': read_single(row, 42),           # 0.1V,     Vac2,               Three phase grid voltage
+            #'Iac2': read_single(row, 43),           # 0.1A,     Iac2,               Three phase grid output current
             'Pac2': read_double(row, 44),           # 0.1VA,    Pac2 H,             Three phase grid output power (high)
                                                     # 0.1VA,    Pac2 L,             Three phase grid output power (low)
-            'Vac3': read_single(row, 46),           # 0.1V,     Vac3,               Three phase grid voltage
-            'Iac3': read_single(row, 47),           # 0.1A,     Iac3,               Three phase grid output current
+            #'Vac3': read_single(row, 46),           # 0.1V,     Vac3,               Three phase grid voltage
+            #'Iac3': read_single(row, 47),           # 0.1A,     Iac3,               Three phase grid output current
             'Pac3': read_double(row, 48),           # 0.1VA,    Pac3 H,             Three phase grid output power (high)
                                                     # 0.1VA,    Pac3 L,             Three phase grid output power (low)
-            'EnergyToday': read_double(row, 53),    # 0.1kWh,   Energy today H,     Today generate energy (high)
+            'EnergyToday': read_double(row, 53),    # 0.1kWh,   Energy today H,     Today generate energy today (high)
                                                     # 0.1kWh,   Energy today L,     Today generate energy today (low)
             'EnergyTotal': read_double(row, 55),    # 0.1kWh,   Energy total H,     Total generate energy (high)
                                                     # 0.1kWh,   Energy total L,     Total generate energy (low)
-            'TimeTotal': read_double(row, 57, 2),   # 0.5S,     Time total H,       Work time total (high)
+            #'TimeTotal': read_double(row, 57, 2),   # 0.5S,     Time total H,       Work time total (high)
                                                     # 0.5S,     Time total L,       Work time total (low)
             'Temp': read_single(row, 93),           # 0.1C,     Temperature,        Inverter temperature
             'Epv1_today': read_double(row, 59),     # 0.1kWh,   Epv1_today H,       PV Energy today
@@ -126,8 +140,8 @@ class Growatt:
 #            'Epv2_total': read_double(row, 65),     # 0.1kWh,   Epv2_total H,       PV Energy total
                                                     # 0.1kWh,   Epv2_total L,       PV Energy total
             'Epv_total': read_double(row, 91),      # 0.1kWh,   Epv_total H,        PV Energy total
-             'PBusV': read_single(row, 98),           # 0.1V,     P Bus Voltage,      P Bus inside Voltage
-             'NBusV': read_single(row, 99),           # 0.1V,     N Bus Voltage,      N Bus inside Voltage
+#             'PBusV': read_single(row, 98),           # 0.1V,     P Bus Voltage,      P Bus inside Voltage
+#             'NBusV': read_single(row, 99),           # 0.1V,     N Bus Voltage,      N Bus inside Voltage
             'FaultCode': row.registers[105],        #           Fault code,         Inverter fault bit
             'Fault': ErrorCodes[row.registers[105]]
         }
@@ -135,11 +149,17 @@ class Growatt:
         row = self.client.read_input_registers(1000, 100, unit=self.unit)
         if type(row) is ModbusIOException:
             return None
+        info = merge(info, {
+            'PimpFromGrid': read_double(row,21),
+            'PexpFromGrid': read_double(row,29),
+            #'PacToGrid': read_double(row,23),
+        })
 
         #for i in range(0,99):
             #print('single and double 1000 + ' + str(i) + '    ' + str(read_single(row,i)) + '    ' + str(read_double(row,i)) )
         info = merge(info, {
             'Vbat': read_single(row,87),            # BMS voltage
+            'Abat': read_single_signed(row,88),            # BMS voltage
             'SOC': row.registers[86],            # BMS SOC
             'Tbat': read_single(row,89),            # BMS temperature
         })

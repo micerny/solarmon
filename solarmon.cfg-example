@@ -2,19 +2,21 @@
 host = localhost
 port = 8086
 db_name = home
+measurement = inverter
 
 [prometheus]
 postUri = https://influx-prod-10-prod-us-central-0.grafana.net/api/v1/push/influx/write
-token = <your Bearer token form Prometheus, without the prefix "Bearer "> 
+token = <your Bearer token for Prometheus, without the prefix "Bearer ">
 
 [query]
-interval = 5
-offline_interval = 60
+interval = 10
 error_interval = 60
 
-[solarmon]
+[growatt]
+unit = 1
 port = /dev/ttyUSB0
 
-[inverters.growatt]
-unit = 1
-measurement = inverter
+[greenbono]
+host = 192.168.0.100
+port = 6770
+voltage_ratio = 1.0389
