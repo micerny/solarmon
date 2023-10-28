@@ -80,11 +80,12 @@ Import Dashboard Growatt-influx (attached to this project)
 Clone this project to Raspberry Pi and in the project directory edit solarmon.cfg and solarmon.service.  
 Execute:
 ```
+sudo apt-get install pip
 pip install -r requirements.txt
 sudo cp solarmon.service /lib/systemd/system
+sudo systemctl enable solarmon
 sudo systemctl start solarmon
 sudo systemctl status solarmon
-sudo systemctl enable solarmon
 ```
 or simply run it by ```python3 solarmon.py```
 
