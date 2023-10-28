@@ -34,17 +34,17 @@ Use software "Raspberry Pi Manager" to prepare and install Debian image to you R
 Run Raspberry Pi, connect to it using credential defined above  
 ```
 sudo apt update  
-sudo apt update -y  
-wget -qO- https://repos.influxdata.com/influxdb.key | sudo apt-key add -  
-source /etc/os-release  
-echo "deb https://repos.influxdata.com/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/influxdb.list  
-sudo apt update && sudo apt install -y influxdb  
+sudo apt upgrade -y  
+curl https://repos.influxdata.com/influxdata-archive.key | gpg --dearmor | sudo tee /usr/share/keyrings/influxdb-archive-keyring.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/influxdb-archive-keyring.gpg] https://repos.influxdata.com/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/influxdb.list
+sudo apt update
+sudo apt install influxdb
 sudo systemctl unmask influxdb.service  
-sudo systemctl start influxdb  
-sudo systemctl enable influxdb.service  
+sudo systemctl enable influxdb  
+sudo systemctl start influxdb.service
 influx
 ```
-in Influx console create new database named "home":
+In your browser go to http://<IPADDRESS>:8086/ and create new database (bucket) named "home", login and password
 ```
 create database home  
 use home  
