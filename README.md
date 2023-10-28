@@ -44,7 +44,7 @@ sudo systemctl enable influxdb
 sudo systemctl start influxdb.service
 influx
 ```
-In your browser go to http://<IPADDRESS>:8086/ and create new database (bucket) named "home", login and password
+in Influx console create new database named "home":
 ```
 create database home  
 use home  
@@ -59,11 +59,11 @@ wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
 echo "deb https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list  
 sudo apt update && sudo apt install -y grafana  
 sudo systemctl unmask grafana-server.service  
-sudo systemctl start grafana-server  
-sudo systemctl enable grafana-server.service  
+sudo systemctl enable grafana-server  
+sudo systemctl start grafana-server.service  
 ```
 
-Login to Grafana  (admin:admin) and chage the init password.   
+Login to Grafana on port 3000, login as admin, password is admin and change the init password.   
 Add datasource of type InfluxDB and configure this parameters:  
 section HTTP:  
 URL: http://127.0.0.1:8086  
